@@ -46,24 +46,24 @@ class DreamOPipeline(FluxPipeline):
 
     def load_dreamo_model(self, device, use_turbo=True, version='v1.1'):
         # download models and load file
-        hf_hub_download(repo_id='ByteDance/DreamO', filename='dreamo.safetensors', local_dir='models')
-        hf_hub_download(repo_id='ByteDance/DreamO', filename='dreamo_cfg_distill.safetensors', local_dir='models')
+        hf_hub_download(repo_id='ByteDance/DreamO', filename='dreamo.safetensors', local_dir='safetensors')
+        hf_hub_download(repo_id='ByteDance/DreamO', filename='dreamo_cfg_distill.safetensors', local_dir='safetensors')
         if version == 'v1':
             hf_hub_download(repo_id='ByteDance/DreamO', filename='dreamo_quality_lora_pos.safetensors',
-                            local_dir='models')
+                            local_dir='safetensors')
             hf_hub_download(repo_id='ByteDance/DreamO', filename='dreamo_quality_lora_neg.safetensors',
-                            local_dir='models')
-            quality_lora_pos = load_file('models/dreamo_quality_lora_pos.safetensors')
-            quality_lora_neg = load_file('models/dreamo_quality_lora_neg.safetensors')
+                            local_dir='safetensors')
+            quality_lora_pos = load_file('safetensors/dreamo_quality_lora_pos.safetensors')
+            quality_lora_neg = load_file('safetensors/dreamo_quality_lora_neg.safetensors')
         elif version == 'v1.1':
-            hf_hub_download(repo_id='ByteDance/DreamO', filename='v1.1/dreamo_sft_lora.safetensors', local_dir='models')
-            hf_hub_download(repo_id='ByteDance/DreamO', filename='v1.1/dreamo_dpo_lora.safetensors', local_dir='models')
-            sft_lora = load_file('models/v1.1/dreamo_sft_lora.safetensors')
-            dpo_lora = load_file('models/v1.1/dreamo_dpo_lora.safetensors')
+            hf_hub_download(repo_id='ByteDance/DreamO', filename='v1.1/dreamo_sft_lora.safetensors', local_dir='safetensors')
+            hf_hub_download(repo_id='ByteDance/DreamO', filename='v1.1/dreamo_dpo_lora.safetensors', local_dir='safetensors')
+            sft_lora = load_file('safetensors/v1.1/dreamo_sft_lora.safetensors')
+            dpo_lora = load_file('safetensors/v1.1/dreamo_dpo_lora.safetensors')
         else:
             raise ValueError(f'there is no {version}')
-        dreamo_lora = load_file('models/dreamo.safetensors')
-        cfg_distill_lora = load_file('models/dreamo_cfg_distill.safetensors')
+        dreamo_lora = load_file('safetensors/dreamo.safetensors')
+        cfg_distill_lora = load_file('safetensors/dreamo_cfg_distill.safetensors')
 
         # load embedding
         self.t5_embedding.weight.data = dreamo_lora.pop('dreamo_t5_embedding.weight')[-10:]
@@ -87,7 +87,7 @@ class DreamOPipeline(FluxPipeline):
         if use_turbo:
             self.load_lora_weights(
                 hf_hub_download(
-                    "alimama-creative/FLUX.1-Turbo-Alpha", "diffusion_pytorch_model.safetensors", local_dir='models'
+                    "alimama-creative/FLUX.1-Turbo-Alpha", "diffusion_pytorch_model.safetensors", local_dir='safetensors'
                 ),
                 adapter_name='turbo',
             )
@@ -133,25 +133,25 @@ class DreamOPipeline(FluxPipeline):
         
         # download models and load file
         if version == 'v1':#Add commentMore actions
-            hf_hub_download(repo_id='ByteDance/DreamO', filename='dreamo_quality_lora_pos.safetensors', local_dir='models')
-            hf_hub_download(repo_id='ByteDance/DreamO', filename='dreamo_quality_lora_neg.safetensors', local_dir='models')
-            quality_lora_pos = load_file('models/dreamo_quality_lora_pos.safetensors')
-            quality_lora_neg = load_file('models/dreamo_quality_lora_neg.safetensors')
+            hf_hub_download(repo_id='ByteDance/DreamO', filename='dreamo_quality_lora_pos.safetensors', local_dir='safetensors')
+            hf_hub_download(repo_id='ByteDance/DreamO', filename='dreamo_quality_lora_neg.safetensors', local_dir='safetensors')
+            quality_lora_pos = load_file('safetensors/dreamo_quality_lora_pos.safetensors')
+            quality_lora_neg = load_file('safetensors/dreamo_quality_lora_neg.safetensors')
         elif version == 'v1.1':
-            hf_hub_download(repo_id='ByteDance/DreamO', filename='v1.1/dreamo_sft_lora.safetensors', local_dir='models')
-            hf_hub_download(repo_id='ByteDance/DreamO', filename='v1.1/dreamo_dpo_lora.safetensors', local_dir='models')
-            sft_lora = load_file('models/v1.1/dreamo_sft_lora.safetensors')
-            dpo_lora = load_file('models/v1.1/dreamo_dpo_lora.safetensors')
+            hf_hub_download(repo_id='ByteDance/DreamO', filename='v1.1/dreamo_sft_lora.safetensors', local_dir='safetensors')
+            hf_hub_download(repo_id='ByteDance/DreamO', filename='v1.1/dreamo_dpo_lora.safetensors', local_dir='safetensors')
+            sft_lora = load_file('safetensors/v1.1/dreamo_sft_lora.safetensors')
+            dpo_lora = load_file('safetensors/v1.1/dreamo_dpo_lora.safetensors')
         else:
             raise ValueError(f'there is no {version}')
         
         
         # download models and load file
         print(f'load main lora ...')
-        hf_hub_download(repo_id='ByteDance/DreamO', filename='dreamo.safetensors', local_dir='models')
-        hf_hub_download(repo_id='ByteDance/DreamO', filename='dreamo_cfg_distill.safetensors', local_dir='models')
-        dreamo_lora = load_file('models/dreamo.safetensors')
-        cfg_distill_lora = load_file('models/dreamo_cfg_distill.safetensors')
+        hf_hub_download(repo_id='ByteDance/DreamO', filename='dreamo.safetensors', local_dir='safetensors')
+        hf_hub_download(repo_id='ByteDance/DreamO', filename='dreamo_cfg_distill.safetensors', local_dir='safetensors')
+        dreamo_lora = load_file('safetensors/dreamo.safetensors')
+        cfg_distill_lora = load_file('safetensors/dreamo_cfg_distill.safetensors')
 
         # load embedding
         self.t5_embedding.weight.data = dreamo_lora.pop('dreamo_t5_embedding.weight')[-10:]
@@ -168,8 +168,8 @@ class DreamOPipeline(FluxPipeline):
         
         if use_turbo:
             print(f'load turbo lora ...')
-            hf_hub_download("alimama-creative/FLUX.1-Turbo-Alpha", "diffusion_pytorch_model.safetensors", local_dir='models')
-            turbo_lora = load_file('models/diffusion_pytorch_model.safetensors')
+            hf_hub_download("alimama-creative/FLUX.1-Turbo-Alpha", "diffusion_pytorch_model.safetensors", local_dir='safetensors')
+            turbo_lora = load_file('safetensors/diffusion_pytorch_model.safetensors')
             others.append((turbo_lora, 1))
 
         if version == 'v1':
