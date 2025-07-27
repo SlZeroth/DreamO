@@ -79,7 +79,7 @@ class Generator:
         # load dreamo
         model_root = 'black-forest-labs/FLUX.1-dev'
         if os.path.exists(f'./safetensors/{model_root}'):model_root = f'./safetensors/{model_root}'
-        self.dreamo_pipeline = DreamOPipeline.from_pretrained(model_root, torch_dtype=torch.bfloat16)
+        self.dreamo_pipeline = DreamOPipeline.from_pretrained("/root/diffusers-models/FLUX.1-dev", torch_dtype=torch.bfloat16)
         self.dreamo_pipeline.load_dreamo_model(self.device, use_turbo=not self.no_turbo)
         # Quantize the model using int8, which may take some time
         if self.quant == "int8":
