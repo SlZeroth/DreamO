@@ -50,8 +50,8 @@ class Generator:
         # preprocessing models
         # background remove model: BEN2
         self.bg_rm_model = BEN2.BEN_Base().to(self.device).eval()
-        hf_hub_download(repo_id='PramaLLC/BEN2', filename='BEN2_Base.pth', local_dir='models')
-        self.bg_rm_model.loadcheckpoints('models/BEN2_Base.pth')
+        hf_hub_download(repo_id='PramaLLC/BEN2', filename='BEN2_Base.pth', local_dir='safetensors')
+        self.bg_rm_model.loadcheckpoints('safetensors/BEN2_Base.pth')
         # face crop and align tool: facexlib
         self.face_helper = FaceRestoreHelper(
             upscale_factor=1,
@@ -78,7 +78,7 @@ class Generator:
     def dreamo_pipeline_init_default(self):
         # load dreamo
         model_root = 'black-forest-labs/FLUX.1-dev'
-        if os.path.exists(f'./models/{model_root}'):model_root = f'./models/{model_root}'
+        if os.path.exists(f'./safetensors/{model_root}'):model_root = f'./safetensors/{model_root}'
         self.dreamo_pipeline = DreamOPipeline.from_pretrained(model_root, torch_dtype=torch.bfloat16)
         self.dreamo_pipeline.load_dreamo_model(self.device, use_turbo=not self.no_turbo)
         # Quantize the model using int8, which may take some time
@@ -123,9 +123,9 @@ class Generator:
         # download models and load file (~7GB)
         precision = get_precision()  # auto-detect your precision is 'int4' or 'fp4' based on your GPU
         svdq_filename = f"svdq-{precision}_r32-flux.1-dev.safetensors"
-        hf_hub_download(repo_id='mit-han-lab/nunchaku-flux.1-dev', filename=svdq_filename, local_dir='models')
+        hf_hub_download(repo_id='mit-han-lab/nunchaku-flux.1-dev', filename=svdq_filename, local_dir='safetensors')
         transformer:NunchakuFluxTransformer2dModel = NunchakuFluxTransformer2dModel.from_pretrained(
-            f"models/{svdq_filename}",
+            f"safetensors/{svdq_filename}",
             offload=self.offload,
         )
         transformer.set_attention_impl("nunchaku-fp16")  # set attention implementation to fp16
@@ -133,7 +133,6 @@ class Generator:
         print("\n[Profiler] Loading DreamOPipeline from pretrained (FLUX base)...")
         dreamo_pipeline_load_start_time = time.time()
         model_root = 'black-forest-labs/FLUX.1-dev'
-        if os.path.exists(f'./models/{model_root}'):model_root = f'./models/{model_root}' # 兼容目录 ./models
         self.dreamo_pipeline:DreamOPipeline = DreamOPipeline.from_pretrained(model_root, transformer=transformer, torch_dtype=torch.bfloat16)
         print(f"[Profiler] DreamOPipeline (FLUX base) loaded in {time.time() - dreamo_pipeline_load_start_time:.2f} seconds.")
         
